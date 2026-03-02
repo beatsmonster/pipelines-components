@@ -27,6 +27,7 @@ def sdg(
     max_tokens: int = -1,
     export_to_pvc: bool = False,
     export_path: str = "",
+    runtime_params: dict = {},
 ) -> None:
     """Run an SDG Hub flow to generate synthetic data.
 
@@ -49,6 +50,7 @@ def sdg(
         max_tokens: Maximum response tokens. Use -1 for flow default.
         export_to_pvc: Whether to export output to PVC (in addition to KFP artifact).
         export_path: Base PVC path for exports (required if export_to_pvc is True).
+        runtime_params: Per-block parameter overrides as a dict of {block_name: {param: value}}.
     """
     import logging
     import os
@@ -84,6 +86,8 @@ def sdg(
     logger.info(f"Export to PVC: {export_to_pvc}")
     if export_to_pvc:
         logger.info(f"Export Path: {export_path or 'Not provided'}")
+    if runtime_params:
+        logger.info(f"Runtime params: {runtime_params}")
 
     # =========================================================================
     # INPUT HANDLING
@@ -202,6 +206,9 @@ def sdg(
         generate_kwargs["checkpoint_dir"] = checkpoint_pvc_path
         generate_kwargs["save_freq"] = save_freq
         logger.info(f"Checkpointing enabled: dir={checkpoint_pvc_path}, save_freq={save_freq}")
+
+    if runtime_params:
+        generate_kwargs["runtime_params"] = runtime_params
 
     output_df = flow.generate(df, **generate_kwargs)
     output_rows = len(output_df)
