@@ -87,6 +87,7 @@ def _call_sdg(output_artifact, output_metrics, **kwargs):
         "max_tokens": -1,
         "export_to_pvc": False,
         "export_path": "",
+        "runtime_params": {},
     }
     defaults.update(kwargs)
     sdg.python_func(
@@ -563,6 +564,53 @@ class TestPVCExport:
         timestamp_dir = timestamp_dirs[0]
         export_file = os.path.join(custom_dir, timestamp_dir, "generated.jsonl")
         assert os.path.exists(export_file), "generated.jsonl should exist in custom directory"
+
+
+class TestRuntimeParams:
+    """Tests for runtime_params per-block overrides."""
+
+    @mock.patch("sdg_hub.core.flow.base.Flow.from_yaml")
+    @mock.patch("sdg_hub.core.flow.registry.FlowRegistry.get_flow_path_safe")
+    def test_runtime_params_passed_to_generate(
+        self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, sample_input_file
+    ):
+        """Test that non-empty runtime_params is passed to flow.generate()."""
+        mock_get_path.return_value = "/resolved/flow.yaml"
+        mock_from_yaml.return_value = _make_mock_flow()
+
+        params = {"generate_question": {"temperature": 0.9}}
+        _call_sdg(
+            output_artifact,
+            output_metrics,
+            input_pvc_path=sample_input_file,
+            flow_id="test-flow",
+            runtime_params=params,
+        )
+
+        mock_flow = mock_from_yaml.return_value
+        call_kwargs = mock_flow.generate.call_args.kwargs
+        assert call_kwargs["runtime_params"] == params
+
+    @mock.patch("sdg_hub.core.flow.base.Flow.from_yaml")
+    @mock.patch("sdg_hub.core.flow.registry.FlowRegistry.get_flow_path_safe")
+    def test_empty_runtime_params_not_passed(
+        self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, sample_input_file
+    ):
+        """Test that empty runtime_params is not passed to flow.generate()."""
+        mock_get_path.return_value = "/resolved/flow.yaml"
+        mock_from_yaml.return_value = _make_mock_flow()
+
+        _call_sdg(
+            output_artifact,
+            output_metrics,
+            input_pvc_path=sample_input_file,
+            flow_id="test-flow",
+            runtime_params={},
+        )
+
+        mock_flow = mock_from_yaml.return_value
+        call_kwargs = mock_flow.generate.call_args.kwargs
+        assert "runtime_params" not in call_kwargs
 
 
 class TestOutputHandling:

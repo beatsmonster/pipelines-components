@@ -28,6 +28,7 @@ This component wraps the SDG Hub SDK to execute composable data generation flows
 | `max_tokens` | `int` | `-1` | Maximum response tokens. Use -1 for flow default |
 | `export_to_pvc` | `bool` | `False` | Export output to PVC (in addition to KFP artifact) |
 | `export_path` | `str` | `""` | Base PVC path for exports (required if `export_to_pvc` is `True`) |
+| `runtime_params` | `dict` | `{}` | Per-block parameter overrides as `{block_name: {param: value}}` |
 
 ## Outputs
 
