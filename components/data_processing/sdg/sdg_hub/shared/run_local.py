@@ -8,16 +8,23 @@ even when the artifact is not provided.
 
 import json
 import os
+import sys
 import tempfile
 
-import kfp.local
-import pandas as pd
-from component import sdg
-from kfp.local import executor_input_utils, task_dispatcher
+# The component module lives one level up (sdg_hub/), so add it to sys.path
+# when running this script directly (e.g. python shared/run_local.py).
+_COMPONENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _COMPONENT_DIR not in sys.path:
+    sys.path.insert(0, _COMPONENT_DIR)
+
+import kfp.local  # noqa: E402
+import pandas as pd  # noqa: E402
+from component import sdg  # noqa: E402
+from kfp.local import executor_input_utils, task_dispatcher  # noqa: E402
 
 # Paths
-REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
-TEST_DATA = os.path.join(REPO_ROOT, "..", "..", "..", "test_data", "sdg_hub")
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEST_DATA = os.path.join(REPO_ROOT, "tests", "test_data")
 INPUT_PATH = os.path.abspath(os.path.join(TEST_DATA, "sample_input.jsonl"))
 FLOW_PATH = os.path.abspath(os.path.join(TEST_DATA, "llm_test_flow.yaml"))
 

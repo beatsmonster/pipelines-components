@@ -151,11 +151,11 @@ uv sync --extra test
 KFP's `LocalRunner` does not support `Input[Dataset]` artifacts, so local execution
 calls `sdg.python_func()` directly with mock artifact objects.
 
-A ready-to-run script is provided at `run_local.py`:
+A ready-to-run script is provided at `shared/run_local.py`:
 
 ```bash
-cd components/sdg/sdg_hub
-LLM_API_KEY="<your-api-key>" python run_local.py
+cd components/data_processing/sdg/sdg_hub
+LLM_API_KEY="<your-api-key>" python shared/run_local.py
 ```
 
 This runs the LLM test flow against `test_data/sdg_hub/sample_input.jsonl` using
