@@ -638,16 +638,11 @@ component-specific packages your component requires at runtime:
 ```bash
 # Install project-wide test dependencies (from the repo root)
 uv sync --extra test
-
-# Install component-specific runtime dependencies that your tests need.
-# For example, if your component uses sdg-hub and pandas:
-uv pip install "sdg-hub>=0.7.0,<1.0" pandas
 ```
 
-> **Note:** The test runner does **not** auto-install component-specific
-> dependencies. Each component's README or `metadata.yaml` lists the packages
-> it needs. Install them into your virtual environment before running the
-> component's tests.
+> **Note:** Some components require additional runtime packages for local testing
+> (e.g., SDK libraries listed in `packages_to_install`). See each component's
+> README for specific installation instructions.
 
 Run these commands from your component/pipeline directory before submitting your contribution:
 
@@ -919,9 +914,7 @@ pytest tests/ --cov=. --cov-report=html
 - **Local runner tests**: Should verify end-to-end component execution
 - **Resource considerations**: Local runner tests require adequate system resources for your component's workload
 - **Dependencies**: Mock external services in unit tests; use real dependencies in local runner tests.
-  You must manually install any component-specific runtime packages (e.g., `sdg-hub`, `pandas`)
-  into your virtual environment before running the tests -- the test runner does not install them
-  automatically
+  See each component's README for required runtime packages to install before running tests
 - **Cleanup**: Use provided fixtures to ensure proper test environment cleanup
 
 ### Building Custom Container Images

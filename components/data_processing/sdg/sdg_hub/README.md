@@ -144,6 +144,9 @@ Exports are saved to: `{export_path}/{flow_id}/{timestamp}/generated.jsonl`
 # From the repo root
 uv venv && source .venv/bin/activate
 uv sync --extra test
+
+# Install component-specific runtime dependencies
+uv pip install "sdg-hub>=0.7.0,<1.0" pandas
 ```
 
 ### Running the Component Locally
