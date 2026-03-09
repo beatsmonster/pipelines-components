@@ -9,7 +9,7 @@ import pytest
 from ..component import sdg
 
 # Path to test data relative to repo root
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "test_data", "sdg_hub")
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "test_data")
 TEST_INPUT_PATH = os.path.join(TEST_DATA_DIR, "sample_input.jsonl")
 TEST_FLOW_PATH = os.path.join(TEST_DATA_DIR, "transform_test_flow.yaml")
 LLM_TEST_FLOW_PATH = os.path.join(TEST_DATA_DIR, "llm_test_flow.yaml")
