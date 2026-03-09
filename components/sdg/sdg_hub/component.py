@@ -9,6 +9,7 @@ from kfp import dsl
 
 
 @dsl.component(
+    base_image="registry.access.redhat.com/ubi9/python-311:latest",
     packages_to_install=["sdg-hub>=0.7.0,<1.0"],
 )
 def sdg(
