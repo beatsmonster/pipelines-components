@@ -31,11 +31,17 @@ class MockArtifact:
 class TestSdgHubLocalRunner:
     """Test component with real flow execution (no LLM)."""
 
-    def test_local_execution_with_transform_flow(self):
+    def test_local_execution_with_transform_flow(self, setup_and_teardown_subprocess_runner):
         """Test component execution with a transform-only flow.
 
-        Calls python_func directly since KFP LocalRunner does not support
-        Input[Dataset] artifacts in the component signature.
+        This test accepts the ``setup_and_teardown_subprocess_runner`` fixture
+        for consistency with the repo-wide local-test pattern (see conftest.py),
+        but calls ``python_func()`` directly instead of invoking the component
+        through the KFP SubprocessRunner.  The reason is that KFP's
+        SubprocessRunner does **not** support ``Input[Dataset]`` artifacts,
+        which are present in the sdg component signature, and attempting to
+        run the component via the runner raises
+        ``ValueError: Input artifacts are not yet supported for local execution``.
         """
         with tempfile.TemporaryDirectory() as tmp_dir:
             output_artifact = MockArtifact(os.path.join(tmp_dir, "output.jsonl"))
