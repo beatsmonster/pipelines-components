@@ -23,8 +23,8 @@ from component import sdg  # noqa: E402
 from kfp.local import executor_input_utils, task_dispatcher  # noqa: E402
 
 # Paths
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEST_DATA = os.path.join(REPO_ROOT, "tests", "test_data")
+COMPONENT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEST_DATA = os.path.join(COMPONENT_ROOT, "tests", "test_data")
 INPUT_PATH = os.path.abspath(os.path.join(TEST_DATA, "sample_input.jsonl"))
 FLOW_PATH = os.path.abspath(os.path.join(TEST_DATA, "llm_test_flow.yaml"))
 

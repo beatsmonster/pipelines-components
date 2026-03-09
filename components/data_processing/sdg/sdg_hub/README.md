@@ -216,13 +216,13 @@ To persist output to a local directory instead of a temp folder, set
 
 ```bash
 # Unit tests (no API key needed)
-pytest components/sdg/sdg_hub/tests/test_component_unit.py -v
+pytest components/data_processing/sdg/sdg_hub/tests/test_component_unit.py -v
 
 # Integration test with transform-only flow (no API key needed)
-pytest components/sdg/sdg_hub/tests/test_component_local.py::TestSdgHubLocalRunner -v
+pytest components/data_processing/sdg/sdg_hub/tests/test_component_local.py::TestSdgHubLocalRunner -v
 
 # LLM E2E tests (requires API key)
-LLM_API_KEY="<your-api-key>" pytest components/sdg/sdg_hub/tests/test_component_local.py::TestSdgHubLLMFlow -v
+LLM_API_KEY="<your-api-key>" pytest components/data_processing/sdg/sdg_hub/tests/test_component_local.py::TestSdgHubLLMFlow -v
 ```
 
 ## Environment Variables
