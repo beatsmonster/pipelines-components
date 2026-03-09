@@ -60,6 +60,8 @@ packages = [
     "kfp_components.components.training",
     "kfp_components.pipelines",
     "kfp_components.pipelines.data_processing",
+    "kfp_components.pipelines.data_processing.sdg",
+    "kfp_components.pipelines.data_processing.sdg.sdg_hub",
     "kfp_components.pipelines.deployment",
     "kfp_components.pipelines.evaluation",
     "kfp_components.pipelines.training",
