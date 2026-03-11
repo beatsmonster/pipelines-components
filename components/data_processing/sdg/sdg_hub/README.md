@@ -63,7 +63,7 @@ def my_pipeline():
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
-        secret_key_to_env={"OPENAI_APIKEY": "LLM_API_KEY"},
+        secret_key_to_env={"api_key": "LLM_API_KEY"},
     )
 ```
 
@@ -97,7 +97,7 @@ def chained_pipeline():
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
-        secret_key_to_env={"OPENAI_APIKEY": "LLM_API_KEY"},
+        secret_key_to_env={"api_key": "LLM_API_KEY"},
     )
 ```
 
@@ -130,7 +130,7 @@ def export_pipeline():
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
-        secret_key_to_env={"OPENAI_APIKEY": "LLM_API_KEY"},
+        secret_key_to_env={"api_key": "LLM_API_KEY"},
     )
 ```
 
