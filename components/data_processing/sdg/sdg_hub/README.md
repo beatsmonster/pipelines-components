@@ -37,10 +37,14 @@ This component wraps the SDG Hub SDK to execute composable data generation flows
 
 ## Usage
 
+> **Note:** The import paths below assume you are compiling from the repo root with
+> `PYTHONPATH=.`. If you installed `kfp-components` as a package, use
+> `from kfp_components.components.data_processing.sdg.sdg_hub import sdg` instead.
+
 ### Basic PVC Input
 
 ```python
-from components.sdg.sdg_hub import sdg
+from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
 from kfp_kubernetes import mount_pvc, use_secret_as_env
 
@@ -72,7 +76,7 @@ def my_pipeline():
 Chain SDG with upstream components by consuming their output artifacts:
 
 ```python
-from components.sdg.sdg_hub import sdg
+from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
 from kfp_kubernetes import use_secret_as_env
 
@@ -106,7 +110,7 @@ def chained_pipeline():
 Export generated data to a PVC for archival or external access:
 
 ```python
-from components.sdg.sdg_hub import sdg
+from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
 from kfp_kubernetes import mount_pvc, use_secret_as_env
 
@@ -172,7 +176,7 @@ import tempfile
 
 import pandas as pd
 
-from components.sdg.sdg_hub.component import sdg
+from components.data_processing.sdg.sdg_hub.component import sdg
 
 
 class Artifact:
@@ -271,7 +275,7 @@ oc create configmap sdg-prompts \
 ```python
 from kfp import compiler, dsl
 from kfp.kubernetes import use_config_map_as_volume, use_secret_as_env
-from components.sdg.sdg_hub.component import sdg
+from components.data_processing.sdg.sdg_hub.component import sdg
 
 
 @dsl.component(
