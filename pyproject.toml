@@ -36,7 +36,7 @@ test = [
     "setuptools",
     # Component-specific SDK deps required for python_func() tests.
     # KFP SubprocessRunner cannot auto-install these because it does not
-    # support Input[Dataset] artifacts (see: https://github.com/kubeflow/pipelines/issues/XXXX).
+    # support Input[Dataset] artifacts (see: https://github.com/kubeflow/pipelines/issues/13061).
     # Once KFP fixes this, these can be removed and tests can use
     # SubprocessRunner(use_venv=True) instead.
     "sdg-hub>=0.7.0,<1.0",
