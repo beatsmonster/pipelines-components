@@ -1,39 +1,74 @@
-# SDG Hub Component
+# Sdg Hub ✨
 
-Runs [SDG Hub](https://github.com/Red-Hat-AI-Innovation-Team/sdg_hub) synthetic data generation flows as a Kubeflow Pipelines component.
+> ⚠️ **Stability: alpha** — This asset is not yet stable and may change.
 
-## Overview
+## Overview 🧾
 
-This component wraps the SDG Hub SDK to execute composable data generation flows within KFP pipelines. It supports:
+Run an SDG Hub flow to generate synthetic data.
 
-- Built-in flows via `flow_id` (from the SDG Hub registry)
-- Custom flows via `flow_yaml_path` (mounted from ConfigMap or PVC)
-- Automatic LLM model configuration for flows with LLM blocks
-- Checkpointing for resumable execution
+Loads input data, selects and configures a flow, executes it, and writes the output as a JSONL artifact with execution
+metrics.
 
-## Parameters
+## Inputs 📥
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `input_artifact` | `dsl.Input[dsl.Dataset]` | `None` | KFP Dataset artifact from upstream component |
-| `input_pvc_path` | `str` | `""` | Path to JSONL input file on a mounted PVC |
-| `flow_id` | `str` | `""` | Built-in flow ID from the SDG Hub registry |
-| `flow_yaml_path` | `str` | `""` | Path to a custom flow YAML file |
-| `model` | `str` | `""` | LiteLLM model identifier (e.g. `openai/gpt-4o-mini`) |
-| `max_concurrency` | `int` | `10` | Maximum concurrent LLM requests |
-| `checkpoint_pvc_path` | `str` | `""` | PVC path for checkpoints |
-| `save_freq` | `int` | `100` | Checkpoint save frequency |
-| `log_level` | `str` | `"INFO"` | Logging level |
-| `temperature` | `float` | `-1.0` | LLM sampling temperature (0.0-2.0). Use -1 for flow default |
-| `max_tokens` | `int` | `-1` | Maximum response tokens. Use -1 for flow default |
-| `export_to_pvc` | `bool` | `False` | Export output to PVC (in addition to KFP artifact) |
-| `export_path` | `str` | `""` | Base PVC path for exports (required if `export_to_pvc` is `True`) |
-| `runtime_params` | `dict` | `{}` | Per-block parameter overrides as `{block_name: {param: value}}` |
+| `output_artifact` | `dsl.Output[dsl.Dataset]` | `None` | KFP Dataset artifact for downstream components. |
+| `output_metrics` | `dsl.Output[dsl.Metrics]` | `None` | KFP Metrics artifact with execution stats. |
+| `input_artifact` | `dsl.Input[dsl.Dataset]` | `None` | KFP Dataset artifact from upstream component (optional). |
+| `input_pvc_path` | `str` | `""` | Path to JSONL input file on a mounted PVC (optional). |
+| `flow_id` | `str` | `""` | Built-in flow ID from the SDG Hub registry. |
+| `flow_yaml_path` | `str` | `""` | Path to a custom flow YAML file. |
+| `model` | `str` | `""` | LiteLLM model identifier (e.g. 'openai/gpt-4o-mini'). |
+| `max_concurrency` | `int` | `10` | Maximum concurrent LLM requests. |
+| `checkpoint_pvc_path` | `str` | `""` | PVC path for checkpoints (enables resume). |
+| `save_freq` | `int` | `100` | Checkpoint save frequency (number of samples). |
+| `log_level` | `str` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR). |
+| `temperature` | `float` | `-1.0` | LLM sampling temperature (0.0-2.0). Use -1 for flow default. |
+| `max_tokens` | `int` | `-1` | Maximum response tokens. Use -1 for flow default. |
+| `export_to_pvc` | `bool` | `False` | Whether to export output to PVC (in addition to KFP artifact). |
+| `export_path` | `str` | `""` | Base PVC path for exports (required if export_to_pvc is True). |
+| `runtime_params` | `dict` | `{}` | Per-block parameter overrides as a dict of {block_name: {param: value}}. |
+
+## Metadata 🗂️
+
+- **Name**: sdg_hub
+- **Stability**: alpha
+- **Dependencies**:
+  - Kubeflow:
+    - Name: Pipelines, Version: >=2.15.2
+  - External Services:
+    - Name: SDG Hub, Version: >=0.7.0
+    - Name: LiteLLM, Version: >=1.0.0
+- **Tags**:
+  - sdg
+  - synthetic_data_generation
+  - llm
+  - data_processing
+- **Last Verified**: 2026-02-24 00:00:00+00:00
+- **Owners**:
+  - Approvers:
+    - beatsmonster
+    - shivchander
+    - eshwarprasadS
+    - abhi1092
+  - Reviewers:
+    - beatsmonster
+    - shivchander
+    - eshwarprasadS
+    - abhi1092
+
+## Additional Resources 📚
+
+- **Documentation**: [https://github.com/Red-Hat-AI-Innovation-Team/sdg_hub](https://github.com/Red-Hat-AI-Innovation-Team/sdg_hub)
+
+
+<!-- custom-content -->
 
 ## Outputs
 
-- `output_artifact` (`Dataset`): JSONL file with generated data
-- `output_metrics` (`Metrics`): JSON with `input_rows`, `output_rows`, `execution_time_seconds`
+- `output_artifact` (`Dataset`): JSONL file with generated synthetic data
+- `output_metrics` (`Metrics`): Execution metrics — `input_rows`, `output_rows`, `execution_time_seconds`
 
 ## Usage
 
@@ -56,14 +91,7 @@ def my_pipeline():
         model="openai/gpt-4o-mini",
     )
 
-    # Mount PVC containing input data
-    mount_pvc(
-        task=sdg_task,
-        pvc_name="data-pvc",
-        mount_path="/mnt/data",
-    )
-
-    # Inject LLM API credentials
+    mount_pvc(task=sdg_task, pvc_name="data-pvc", mount_path="/mnt/data")
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
@@ -72,8 +100,6 @@ def my_pipeline():
 ```
 
 ### Artifact Chaining
-
-Chain SDG with upstream components by consuming their output artifacts:
 
 ```python
 from components.data_processing.sdg.sdg_hub import sdg
@@ -88,16 +114,12 @@ def preprocess_data(output_data: dsl.Output[dsl.Dataset]) -> None:
 
 @dsl.pipeline(name="sdg-chained-pipeline")
 def chained_pipeline():
-    # Step 1: Preprocess data
     preprocess_task = preprocess_data()
-
-    # Step 2: Run SDG using preprocessed data
     sdg_task = sdg(
         input_artifact=preprocess_task.outputs["output_data"],
         flow_id="green-clay-812",
         model="openai/gpt-4o-mini",
     )
-
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
@@ -106,8 +128,6 @@ def chained_pipeline():
 ```
 
 ### PVC Export
-
-Export generated data to a PVC for archival or external access:
 
 ```python
 from components.data_processing.sdg.sdg_hub import sdg
@@ -123,14 +143,7 @@ def export_pipeline():
         export_to_pvc=True,
         export_path="/mnt/data/exports",
     )
-
-    # Mount PVC for both input and export
-    mount_pvc(
-        task=sdg_task,
-        pvc_name="data-pvc",
-        mount_path="/mnt/data",
-    )
-
+    mount_pvc(task=sdg_task, pvc_name="data-pvc", mount_path="/mnt/data")
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
@@ -140,6 +153,13 @@ def export_pipeline():
 
 Exports are saved to: `{export_path}/{flow_id}/{timestamp}/generated.jsonl`
 
+## Environment Variables
+
+For flows with LLM blocks, set these via Kubernetes Secrets:
+
+- `LLM_API_KEY`: API key for the LLM provider
+- `LLM_API_BASE`: API base URL (optional, for self-hosted models)
+
 ## Local Development
 
 ### Prerequisites
@@ -148,9 +168,6 @@ Exports are saved to: `{export_path}/{flow_id}/{timestamp}/generated.jsonl`
 # From the repo root
 uv venv && source .venv/bin/activate
 uv sync --extra test
-
-# Install component-specific runtime dependencies
-uv pip install "sdg-hub>=0.7.0,<1.0" pandas
 ```
 
 ### Running the Component Locally
@@ -168,57 +185,6 @@ LLM_API_KEY="<your-api-key>" python shared/run_local.py
 This runs the LLM test flow against `tests/test_data/sample_input.jsonl` using
 `gpt-4o-mini`, prints the generated output, and cleans up the temp directory.
 
-To run with your own data or flow:
-
-```python
-import os
-import tempfile
-
-import pandas as pd
-
-from components.data_processing.sdg.sdg_hub.component import sdg
-
-
-class Artifact:
-    def __init__(self, path):
-        self.path = path
-        self.metadata = {}
-
-    def log_metric(self, metric, value):
-        self.metadata[metric] = value
-
-
-with tempfile.TemporaryDirectory() as tmp_dir:
-    output_artifact = Artifact(os.path.join(tmp_dir, "output.jsonl"))
-    output_metrics = Artifact(os.path.join(tmp_dir, "metrics.json"))
-
-    sdg.python_func(
-        output_artifact=output_artifact,
-        output_metrics=output_metrics,
-        input_pvc_path="/path/to/your/input.jsonl",
-        flow_yaml_path="/path/to/your/flow.yaml",  # or use flow_id="green-clay-812"
-        model="openai/gpt-4o-mini",
-        max_concurrency=1,
-        temperature=0.7,
-        max_tokens=2048,
-        checkpoint_pvc_path="",
-        save_freq=100,
-        log_level="INFO",
-        export_to_pvc=False,
-        export_path="",
-    )
-
-    # Read results
-    df = pd.read_json(output_artifact.path, lines=True)
-    print(df)
-
-    print(output_metrics.metadata)
-```
-
-To persist output to a local directory instead of a temp folder, set
-`export_to_pvc=True` and `export_path` to a local directory. Output is written to
-`{export_path}/{flow_id}/{timestamp}/generated.jsonl`.
-
 ### Running Tests
 
 ```bash
@@ -232,13 +198,6 @@ pytest components/data_processing/sdg/sdg_hub/tests/test_component_local.py::Tes
 LLM_API_KEY="<your-api-key>" pytest components/data_processing/sdg/sdg_hub/tests/test_component_local.py::TestSdgHubLLMFlow -v
 ```
 
-## Environment Variables
-
-For flows with LLM blocks, set these via Kubernetes Secrets:
-
-- `LLM_API_KEY`: API key for the LLM provider
-- `LLM_API_BASE`: API base URL (optional, for self-hosted models)
-
 ## Running on Red Hat OpenShift AI
 
 ### Prerequisites
@@ -246,7 +205,7 @@ For flows with LLM blocks, set these via Kubernetes Secrets:
 - OpenShift AI with a pipeline server configured in your data science project
 - `oc` CLI logged in to the cluster
 - S3-compatible object storage configured for the pipeline server
-- KFP SDK and kfp-kubernetes installed: `pip install kfp kfp-kubernetes`
+- KFP SDK installed: `pip install kfp`
 
 ### 1. Create Cluster Resources
 
@@ -277,28 +236,10 @@ from kfp import compiler, dsl
 from kfp.kubernetes import use_config_map_as_volume, use_secret_as_env
 from components.data_processing.sdg.sdg_hub.component import sdg
 
-
-@dsl.component(
-    base_image="registry.access.redhat.com/ubi9/python-311:latest",
-    packages_to_install=["pandas"],
-)
-def create_sample_data(output_data: dsl.Output[dsl.Dataset]) -> None:
-    """Create sample input data."""
-    import pandas as pd
-
-    data = [
-        {"document": "Python is a programming language.", "domain": "technology"},
-        {"document": "Machine learning is a subset of AI.", "domain": "technology"},
-    ]
-    pd.DataFrame(data).to_json(output_data.path, orient="records", lines=True)
-
-
 @dsl.pipeline(name="sdg-pipeline")
 def sdg_pipeline(model: str = "openai/gpt-4o-mini"):
-    data_task = create_sample_data()
-
     sdg_task = sdg(
-        input_artifact=data_task.outputs["output_data"],
+        input_pvc_path="/mnt/data/input.jsonl",
         flow_yaml_path="/etc/sdg/flow.yaml",
         model=model,
         max_concurrency=1,
@@ -309,13 +250,8 @@ def sdg_pipeline(model: str = "openai/gpt-4o-mini"):
     use_secret_as_env(task=sdg_task, secret_name="llm-credentials",
                       secret_key_to_env={"api_key": "LLM_API_KEY"})
 
-
-# Compile
 compiler.Compiler().compile(sdg_pipeline, package_path="sdg_pipeline.yaml")
 ```
-
-> **Note:** Use `registry.access.redhat.com/ubi9/python-311:latest` as the base image.
-> The default `python:3.11` image may hit Docker Hub rate limits on OpenShift clusters.
 
 ### 3. Submit the Pipeline
 
@@ -323,8 +259,6 @@ compiler.Compiler().compile(sdg_pipeline, package_path="sdg_pipeline.yaml")
 import kfp
 import os
 
-# Get route: oc get route ds-pipeline-dspa -n <namespace> -o=jsonpath='{.spec.host}'
-# Get token: oc whoami -t
 host = os.environ["KFP_ROUTE"]
 token = os.environ["KFP_TOKEN"]
 
@@ -337,9 +271,6 @@ run = client.create_run_from_pipeline_package(
 )
 print(f"Run: https://{host}/#/runs/details/{run.run_id}")
 ```
-
-To rerun the same pipeline, call `create_run_from_pipeline_package` again — the
-compiled YAML and cluster resources are already in place.
 
 ### 4. Monitor
 
@@ -354,8 +285,6 @@ Or via `oc`:
 oc get pods -n <namespace> | grep sdg-pipeline
 oc logs <pod-name> -c main -n <namespace>
 ```
-
-<!-- custom-content -->
 
 <details>
 <summary><h2>Architecture Design Document</h2></summary>

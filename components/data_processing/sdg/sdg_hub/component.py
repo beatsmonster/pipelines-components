@@ -28,7 +28,7 @@ def sdg(
     export_to_pvc: bool = False,
     export_path: str = "",
     runtime_params: dict = {},
-) -> None:
+):
     """Run an SDG Hub flow to generate synthetic data.
 
     Loads input data, selects and configures a flow, executes it,
