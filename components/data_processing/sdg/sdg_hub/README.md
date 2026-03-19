@@ -81,7 +81,7 @@ metrics.
 ```python
 from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
-from kfp.kubernetes import mount_pvc, use_secret_as_env
+from kfp_kubernetes import mount_pvc, use_secret_as_env
 
 @dsl.pipeline(name="sdg-pipeline")
 def my_pipeline():
@@ -104,7 +104,7 @@ def my_pipeline():
 ```python
 from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
-from kfp.kubernetes import use_secret_as_env
+from kfp_kubernetes import use_secret_as_env
 
 @dsl.component(packages_to_install=["pandas"])
 def preprocess_data(output_data: dsl.Output[dsl.Dataset]) -> None:
@@ -132,7 +132,7 @@ def chained_pipeline():
 ```python
 from components.data_processing.sdg.sdg_hub import sdg
 from kfp import dsl
-from kfp.kubernetes import mount_pvc, use_secret_as_env
+from kfp_kubernetes import mount_pvc, use_secret_as_env
 
 @dsl.pipeline(name="sdg-export-pipeline")
 def export_pipeline():
@@ -233,7 +233,7 @@ oc create configmap sdg-prompts \
 
 ```python
 from kfp import compiler, dsl
-from kfp.kubernetes import use_config_map_as_volume, use_secret_as_env
+from kfp_kubernetes import use_config_map_as_volume, use_secret_as_env
 from components.data_processing.sdg.sdg_hub.component import sdg
 
 @dsl.pipeline(name="sdg-pipeline")
