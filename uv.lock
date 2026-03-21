@@ -1190,6 +1190,7 @@ dev = [
     { name = "docker" },
     { name = "docstring-parser" },
     { name = "jinja2" },
+    { name = "kfp-kubernetes" },
     { name = "packaging" },
     { name = "pip" },
     { name = "pytest" },
@@ -1210,6 +1211,7 @@ test = [
     { name = "docker" },
     { name = "docstring-parser" },
     { name = "jinja2" },
+    { name = "kfp-kubernetes" },
     { name = "packaging" },
     { name = "pip" },
     { name = "pytest" },
@@ -1229,6 +1231,7 @@ requires-dist = [
     { name = "kfp", specifier = ">=2.15.2" },
     { name = "kfp-components", extras = ["lint"], marker = "extra == 'dev'" },
     { name = "kfp-components", extras = ["test"], marker = "extra == 'dev'" },
+    { name = "kfp-kubernetes", marker = "extra == 'test'" },
     { name = "packaging", marker = "extra == 'test'" },
     { name = "pip", marker = "extra == 'test'" },
     { name = "pytest", marker = "extra == 'test'" },
@@ -1242,6 +1245,19 @@ requires-dist = [
     { name = "yamllint", marker = "extra == 'lint'", specifier = "==1.38.0" },
 ]
 provides-extras = ["lint", "test", "dev"]
+
+[[package]]
+name = "kfp-kubernetes"
+version = "2.16.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "kfp" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/10/3d/953a9553ef097425a8e050037edab73794d6fb7ec94010ba30bebb860e5c/kfp_kubernetes-2.16.0.tar.gz", hash = "sha256:39c0ae960f3cbd349b1fb823071bc687b626d14cb759746b5b98700a7d6956a8", size = 19714, upload-time = "2026-02-25T14:32:30.879Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/ee/3f36c14ddc007e9c0a542d4dbd25409c3dab49c4423446365c493c1525a4/kfp_kubernetes-2.16.0-py3-none-any.whl", hash = "sha256:d2a5ef0edfbfdf3a60dbb72f8cbde766636d06cd30d90cbd23c8167538fcdb4d", size = 27274, upload-time = "2026-02-25T14:32:29.745Z" },
+]
 
 [[package]]
 name = "kfp-pipeline-spec"
@@ -1290,7 +1306,7 @@ wheels = [
 
 [[package]]
 name = "litellm"
-version = "1.82.4"
+version = "1.82.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1306,9 +1322,9 @@ dependencies = [
     { name = "tiktoken" },
     { name = "tokenizers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/79/b492be13542aebd62aafc0490e4d5d6e8e00ce54240bcabf5c3e46b1a49b/litellm-1.82.4.tar.gz", hash = "sha256:9c52b1c0762cb0593cdc97b26a8e05004e19b03f394ccd0f42fac82eff0d4980", size = 17378196, upload-time = "2026-03-18T01:18:05.378Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/f0/ec42ee14b388ce1d08a1df638f894ed7f1e6ac35b9daf0588ff7f7d52262/litellm-1.82.5.tar.gz", hash = "sha256:7988a9b48c8ccd9e5ebced80a4dfce9ce87083b303c3f67082450a4ad6dd312f", size = 17406156, upload-time = "2026-03-21T00:03:53.239Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/ad/7eaa1121c6b191f2f5f2e8c7379823ece6ec83741a4b3c81b82fe2832401/litellm-1.82.4-py3-none-any.whl", hash = "sha256:d37c34a847e7952a146ed0e2888a24d3edec7787955c6826337395e755ad5c4b", size = 15559801, upload-time = "2026-03-18T01:18:02.026Z" },
+    { url = "https://files.pythonhosted.org/packages/68/1f/b6c8043eec81eade53a4d0e15a50b788ab0e82661e01a25e0b8536a4dca0/litellm-1.82.5-py3-none-any.whl", hash = "sha256:e1012ab816352215c4e00776dd48b0c68058b537888a8ff82cca62af19e6fb11", size = 15589652, upload-time = "2026-03-21T00:03:48.87Z" },
 ]
 
 [[package]]
