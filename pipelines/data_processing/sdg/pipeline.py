@@ -9,11 +9,8 @@ from kfp.kubernetes import use_config_map_as_volume, use_secret_as_env
 
 from components.data_processing.sdg.component import sdg
 
-# Use UBI Python image accessible from OpenShift (avoids Docker Hub rate limits)
-BASE_IMAGE = "registry.access.redhat.com/ubi9/python-311:latest"
 
-
-@dsl.component(packages_to_install=["pandas"], base_image=BASE_IMAGE)
+@dsl.component(packages_to_install=["pandas"])
 def create_sample_data(output_data: dsl.Output[dsl.Dataset]) -> None:
     """Create sample input data with document and domain columns."""
     import pandas as pd
