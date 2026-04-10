@@ -3,7 +3,6 @@
 import os
 import tempfile
 
-import pandas as pd
 import pytest
 
 from ..component import sdg
@@ -43,6 +42,8 @@ class TestSdgHubLocalRunner:
         run the component via the runner raises
         ``ValueError: Input artifacts are not yet supported for local execution``.
         """
+        import pandas as pd
+
         with tempfile.TemporaryDirectory() as tmp_dir:
             output_artifact = MockArtifact(os.path.join(tmp_dir, "output.jsonl"))
             output_metrics = MockArtifact(os.path.join(tmp_dir, "metrics.json"))
@@ -93,6 +94,8 @@ class TestSdgHubLLMFlow:
 
         Uses max_concurrency=1 to minimize API costs during testing.
         """
+        import pandas as pd
+
         with tempfile.TemporaryDirectory() as tmp_dir:
             # Create mock KFP artifacts
             output_artifact = MockArtifact(os.path.join(tmp_dir, "output.jsonl"))

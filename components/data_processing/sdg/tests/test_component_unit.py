@@ -4,7 +4,6 @@ import os
 import tempfile
 from unittest import mock
 
-import pandas as pd
 import pytest
 
 from ..component import sdg
@@ -45,6 +44,8 @@ def output_metrics(tmp_dir):
 @pytest.fixture
 def sample_input_file(tmp_dir):
     """Create sample JSONL input file."""
+    import pandas as pd
+
     path = os.path.join(tmp_dir, "input.jsonl")
     df = pd.DataFrame(
         {
@@ -113,6 +114,8 @@ class TestInputHandling:
     @mock.patch("sdg_hub.core.flow.registry.FlowRegistry.get_flow_path_safe")
     def test_load_jsonl_input(self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, sample_input_file):
         """Test that JSONL input file is loaded correctly."""
+        import pandas as pd
+
         mock_get_path.return_value = "/resolved/flow.yaml"
         mock_from_yaml.return_value = _make_mock_flow()
 
@@ -140,6 +143,8 @@ class TestInputArtifact:
     @mock.patch("sdg_hub.core.flow.registry.FlowRegistry.get_flow_path_safe")
     def test_artifact_reads_jsonl(self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, tmp_dir):
         """Verify input_artifact is correctly loaded from JSONL file."""
+        import pandas as pd
+
         artifact_path = os.path.join(tmp_dir, "artifact_input.jsonl")
         df = pd.DataFrame(
             {
@@ -166,6 +171,8 @@ class TestInputArtifact:
         self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, tmp_dir
     ):
         """Verify input_artifact takes precedence when both artifact and PVC path are provided."""
+        import pandas as pd
+
         artifact_path = os.path.join(tmp_dir, "artifact_data.jsonl")
         pvc_path = os.path.join(tmp_dir, "pvc_data.jsonl")
 
@@ -438,6 +445,8 @@ class TestFlowExecution:
         self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, sample_input_file
     ):
         """Test that output artifact reflects flow generation result."""
+        import pandas as pd
+
         mock_get_path.return_value = "/resolved/flow.yaml"
         enriched_df = pd.DataFrame(
             {"document": ["Doc one."], "domain": ["science"], "generated_qa": ["Q: What? A: Something."]}
@@ -460,6 +469,8 @@ class TestPVCExport:
         self, mock_get_path, mock_from_yaml, output_artifact, output_metrics, sample_input_file, tmp_dir
     ):
         """Verify export_to_pvc creates a timestamped JSONL file in the export directory."""
+        import pandas as pd
+
         mock_get_path.return_value = "/resolved/flow.yaml"
         mock_from_yaml.return_value = _make_mock_flow()
 

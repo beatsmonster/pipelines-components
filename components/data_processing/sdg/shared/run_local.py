@@ -17,8 +17,6 @@ if _COMPONENT_DIR not in sys.path:
     sys.path.insert(0, _COMPONENT_DIR)
 
 import kfp.local  # noqa: E402
-import pandas as pd  # noqa: E402
-from component import sdg  # noqa: E402
 from kfp.local import executor_input_utils, task_dispatcher  # noqa: E402
 
 # Paths
@@ -60,6 +58,10 @@ def _patched_run(*args, **kwargs):
 
 def main():
     """Run the SDG component with LLM test flow via patched LocalRunner."""
+    import pandas as pd
+
+    from component import sdg
+
     executor_input_utils.construct_executor_input = _patched_construct_executor_input
     task_dispatcher.run_single_task_implementation = _patched_run
 
