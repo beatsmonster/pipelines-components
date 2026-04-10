@@ -59,7 +59,6 @@ def _patched_run(*args, **kwargs):
 def main():
     """Run the SDG component with LLM test flow via patched LocalRunner."""
     import pandas as pd
-
     from component import sdg
 
     executor_input_utils.construct_executor_input = _patched_construct_executor_input
