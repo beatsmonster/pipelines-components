@@ -71,11 +71,19 @@ def sdg_llm_pipeline(
         mount_path="/etc/sdg/prompts",
     )
 
-    # Inject LLM API key from K8s Secret
+    # Inject LLM credentials from K8s Secret "llm-credentials".
+    # Required key: "api_key" -> LLM_API_KEY
     use_secret_as_env(
         task=sdg_task,
         secret_name="llm-credentials",
         secret_key_to_env={"api_key": "LLM_API_KEY"},
+    )
+    # Optional key: "api_base" -> LLM_API_BASE (for self-hosted endpoints)
+    use_secret_as_env(
+        task=sdg_task,
+        secret_name="llm-credentials",
+        secret_key_to_env={"api_base": "LLM_API_BASE"},
+        optional=True,
     )
 
 
