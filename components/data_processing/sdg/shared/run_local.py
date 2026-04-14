@@ -4,22 +4,23 @@ Patches KFP's SubprocessRunner to allow components with optional
 Input[Dataset] artifacts to run locally. Without this patch, KFP
 raises 'Input artifacts are not yet supported for local execution'
 even when the artifact is not provided.
+
+Usage::
+
+    python -m components.data_processing.sdg.shared.run_local
 """
 
 import json
 import os
-import sys
 import tempfile
 
-# The component module lives in the parent sdg/ directory.
-_COMPONENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _COMPONENT_DIR not in sys.path:
-    sys.path.insert(0, _COMPONENT_DIR)
+import kfp.local
+from kfp.local import executor_input_utils, task_dispatcher
 
-import kfp.local  # noqa: E402
-from kfp.local import executor_input_utils, task_dispatcher  # noqa: E402
+from ..component import sdg
 
 # Paths
+_COMPONENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEST_DATA = os.path.join(_COMPONENT_DIR, "tests", "test_data")
 INPUT_PATH = os.path.abspath(os.path.join(TEST_DATA, "sample_input.jsonl"))
 FLOW_PATH = os.path.abspath(os.path.join(TEST_DATA, "llm_test_flow.yaml"))
@@ -59,7 +60,6 @@ def _patched_run(*args, **kwargs):
 def main():
     """Run the SDG component with LLM test flow via patched LocalRunner."""
     import pandas as pd
-    from component import sdg
 
     executor_input_utils.construct_executor_input = _patched_construct_executor_input
     task_dispatcher.run_single_task_implementation = _patched_run
